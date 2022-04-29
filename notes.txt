@@ -1,0 +1,56 @@
+## 3. Tópicos fundamentais para entender o funcionamento do GIT
+
+- Conceitos fundamentais da tecnologia
+
+- **SHA1**
+
+É um algoritmo de encriptação, significa Secure Hash Algorithm, é um conjunto de funções hash criptográficas projetadas pela NSA (Agência de Segurança Nacional dos EUA) → vai pegar o seu arquivo e vai embaralhar ele de uma forma muito específica.
+
+Esses dados encriptados geram um conjunto de caracteres de 40 dígitos único, e eles servem como uma identificação. → a cada mudança, pode ser uma vírgula, ele vai gerar outros 40 dígitos, mas se eu voltar p vírgula que tinha antes, ele gera a mesma chave de antes.
+
+O git faz uso dessa chave de identificação pra poder identificar os arquivos de uma forma segura e rápida.
+
+É uma forma curta de representar um arquivo, o estado de um arquivo.
+
+- **OBJETOS FUNDAMENTAIS**
+
+Esses são os três tipos básicos de objetos do GIT, responsável pelo versionamento do nosso código.
+
+- **BLOBS
+* contém metadados do GIT (o tipo do objeto, o tamanho da string ou do arquivo etc.
+* é um objeto que encapsula esse comportamento de diretórios, é usado para apontar para diretórios que contém arquivos e, por consequência, apontar para arquivos também.**
+    - usa a função `echo` e cospe o output
+    - usa a função chamada `hash-object`
+    - vai devolver o SHA1 - os 40 caracteres
+    - o segundo: gera outro tipo, outro conjunto de caracteres
+    - **Os arquivos ficam guardados dentro desse objeto chamado BLOB, que contém metadados dentro dele.**
+    - Vai ter o tipo de objeto, o tamanho dessa string ou arquivo, uma \0, e o conteúdo de fato desse arquivo (texto, binário, etc.)
+
+- **TREES**
+A TREE armazena BLOBS
+- BLOB é o bloco básico de composição; a TREE armazenando e apontando para tipos de BLOBS diferentes, e os COMMITS  que será o próximo estudado.
+- A TREE também contém metadados, também possui o \0, ela aponta para um BLOB, que, por sua vez tem um SHA1. A TREE  também guarda o nome desse arquivo, diferentemente do BLOB, que só guarda o SHA1 do arquivo, que são os 40 caracteres identificadores e SÓ.
+- A TREE vai ser responsável por montar toda a estrutura e onde está localizado os arquivos. Então, as árvores podem apontar tanto para BLOBs quanto para outras TREES.
+    - Por que é dessa forma? Porque os diretórios dentro de um sistema operacional podem conter outros diretórios. Então faz sentido que o GIT use um tipo de objeto que é recursivo, que são as TREES — uma tree pode apontar para outra assim como um diretório pode ter outro diretório.
+- As TREES também têm um SHA1 desse metadado, então os BLOBS tem o SHA1 do arquivo; a TREE aponta para o BLOB e tem um SHA1 encriptado ali, os metadados da TREE. (que?)
+    - Então se mudar uma vírgula em um arquivo na qual essa TREE está apontando, quando ela for gerar o SHA1 desses metadados, o SHA1 do BLOB por si vai ter mudado e consequentemente vai refletir no SHA1 da TREE.
+    - Ou seja, se mudarmos algo, estaremos mudando toda a leitura de encriptação dessa TREE, estrutura e objeto.
+
+- **COMMITS**
+    - O objeto mais importante de todos.
+- É quem vai juntar tudo, que vai dar sentido para a alteração que fazemos.
+- Ele **aponta para uma TREE**
+- **aponta para um “Parente”**, ou sejam para o último commit realizado antes dele
+- **Aponta para um autor**
+- **Aponta para uma mensagem** também
+- Então esses BLOBS e TREES com modificações etc etc, os COMMITS com o autor e a mensagem vão dar sentido, vão explicar e dar significado às alterações feitas, para esse monte de arquivo e esse monte de pasta.
+- **Tem um timestamp**, que é um carimbo de tempo, então esse objeto leva a data e hora certinha de quando ele foi criado
+- **Os COMMITS também possuem um SHA1!**!!! Também possuem encriptação, que é a geração desse hash de 40 caracteres identificador, dos seus metadados.
+    - O que isso significa? Que se você alterar um dado dentro de uma BLOB de um arquivo, ele irá gerar um SHA1 daquela BLOB. Essa BLOB, por sua vez, tem uma TREE apontando para ela, então tbm vai alterar os metadados da TREE.
+        - POR SUA VEZ, O COMMIT APONTA PARA UMA TREE, que pode apontar para outras TREES dentro de outra TREE.
+
+POR ISSO O GIT É TÃO CONFIÁVEL! Quando você tem um COMMIT, você está garantindo que ninguém alterou aquele commit. Se vc olhar o histórico desse commit (já que o commit aponta para um parente que aponta p outro parente etc etc), você monta uma linha do tempo.
+
+É uma forma segura de demonstrar que aquele “commit"representa exatamente o que você quer dizer com o código.
+
+Por isso o commit é único para cada autor.
